@@ -1,1 +1,15 @@
 <h1><%= @machine.location %> Vending Machine</h1>
+<ul>
+    <h3>Snacks</h3>
+    <% @machine.snacks.each do |snack| %>
+        <li><%=snack.name%>: <%=number_to_currency(snack.price)%></li>
+    
+    <h3>Average Price: <%=number_to_currency(@machine.snacks_avg_price)%>
+</ul>
+    <%end%>
+
+    <%= form_with url: machine_snacks_path(@machine), method: :post, local: true do |form| %>
+        <%= form.label :snack_id, "Snack id" %>
+        <%= form.number_field :snack_id %>
+        <%= form.submit "Submit" %>
+    <%end%>
