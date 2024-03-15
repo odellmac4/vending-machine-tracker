@@ -8,6 +8,12 @@ class MachineSnacksController < ApplicationController
         end
     end
 
+    def destroy
+        machine_snack = MachineSnack.find_by(snack_id: params[:id], machine_id: params[:machine_id])
+        machine_snack.destroy
+        redirect_to machine_path(params[:machine_id])
+    end
+
     private
 
     def machine_snacks_params

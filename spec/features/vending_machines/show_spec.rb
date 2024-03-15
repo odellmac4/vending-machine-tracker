@@ -64,4 +64,74 @@ RSpec.describe 'When a user visits a vending machine show page', type: :feature 
       expect(page).to have_content("Takis: $1.00")
     end
   end
+
+  describe 'extension' do
+    before (:each) do
+      owner = Owner.create(name: "Sam's Snacks")
+      @dons  = owner.machines.create(location: "Don's Mixed Drinks")
+      @excons = owner.machines.create(location: "Excon's Quick Mart")
+
+      @flamin_hots = Snack.create!(name: "Flamin Hots", price: 1.50)
+      @oreos = Snack.create!(name: "Oreos", price: 1.75)
+      cheezits = Snack.create!(name: "Cheezits", price: 2.75)
+
+      @takis = Snack.create!(name: "Takis", price: 1.00)
+      @pop_tart = Snack.create!(name: "Strawberry Pop Tart", price: 3.75)
+
+      @excons.snacks << [@oreos, @flamin_hots, @pop_tart]
+      @dons.snacks << [@oreos, @takis, @pop_tart]
+
+      
+    end
+    it 'displays button to delete snack from a vending machine' do
+      visit machine_path(@dons)
+      # I see a button (or link) next to each snack that says "Remove Snack"
+      within("#snack-#{@oreos.id}") do
+        expect(page).to have_button("Remove Oreos")
+
+        click_button "Remove Oreos"
+        expect(current_path).to eq(machine_path(@dons))
+      end
+      
+      within("#snack-#{@takis.id}") do
+        expect(page).to have_button("Remove Takis")
+      end
+
+      within("#snack-#{@pop_tart.id}") do
+        expect(page).to have_button("Remove Strawberry Pop Tart")
+      end
+
+      expect(page).to_not have_content("Oreos: $1.75")
+
+      visit machine_path(@excons)
+
+      within("#snack-#{@oreos.id}") do
+        expect(page).to have_button("Remove Oreos")
+        expect(page).to have_content("Oreos: $1.75")
+      end
+
+      within("#snack-#{@flamin_hots.id}") do
+        expect(page).to have_button("Remove Flamin Hots")
+      end
+      
+      within("#snack-#{@pop_tart.id}") do
+        expect(page).to have_button("Remove Strawberry Pop Tart")
+        
+        click_button "Remove Strawberry Pop Tart"
+        expect(current_path).to eq (machine_path(@excons))
+      end
+      expect(page).to_not have_content("Strawberry Pop Tart: $3.75")
+
+      visit machine_path(@dons)
+
+      expect(page).to have_content("Strawberry Pop Tart: $3.75")
+      expect(page).to have_button("Remove Strawberry Pop Tart")
+      # When I click that button,
+      # I am redirected to this vending machine's show page
+      # And I no longer see that snack listed on this page
+      # And when I visit a different vending machine's show page that also has that snack
+      
+      # I still see that snack listed.
+    end
+  end
 end

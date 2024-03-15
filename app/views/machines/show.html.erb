@@ -2,8 +2,11 @@
 <ul>
     <h3>Snacks</h3>
     <% @machine.snacks.each do |snack| %>
-        <li><%=snack.name%>: <%=number_to_currency(snack.price)%></li>
-    
+    <section id="snack-<%=snack.id%>">
+        <li><%=snack.name%>: <%=number_to_currency(snack.price)%>
+        <%=button_to "Remove #{snack.name}", machine_snack_path(@machine, snack), method: :delete%>
+        </li>
+    </section>
     <h3>Average Price: <%=number_to_currency(@machine.snacks_avg_price)%>
 </ul>
     <%end%>

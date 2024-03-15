@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   end
 
   resources :machines, only: [:show] do
-    resources :snacks, controller: "machine_snacks", only: [:create]
+    resources :snacks, controller: "machine_snacks", only: [:create, :destroy]
   end
 
   resources :snacks, only: [:show]
